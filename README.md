@@ -1,0 +1,1 @@
+A Java application that uses the WeatherAPI.com API to retrieve the next day's weather forecast for Chisinau, Madrid, Kyiv, and Amsterdam. The forecast data is displayed in a formatted table with cities as rows and dates as columns, including minimum and maximum temperature, humidity, wind speed, and wind direction.
