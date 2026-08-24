@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    id("jacoco")
+    id("org.sonarqube") version "7.0.1.6134"
 }
 
 group = "org.learn"
@@ -17,4 +19,49 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+
+    violationRules {
+        rule {
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.70".toBigDecimal()
+            }
+
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.70".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestCoverageVerification)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "rusleak_weatherApi1")
+        property("sonar.organization", "rusleak")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
