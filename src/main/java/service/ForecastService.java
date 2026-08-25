@@ -6,6 +6,8 @@ import config.City;
 import dto.ForecastDay;
 import dto.ForecastResponse;
 import retrofit2.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -16,6 +18,7 @@ public class ForecastService {
     private static final int FORECAST_DAYS = 2;
     private static final int TOMORROW_INDEX = 1;
 
+    private static final Logger log = LoggerFactory.getLogger(ForecastService.class);
     private final WeatherApiClient client;
     private final AppConfig config;
 
@@ -33,9 +36,9 @@ public class ForecastService {
                 ForecastDay tomorrow = response.getForecast().getForecastDays().get(TOMORROW_INDEX);
                 forecasts.put(city, tomorrow);
             } catch (IOException e) {
-                System.err.println("Network error while fetching forecast for " + city + ": " + e.getMessage());
+                log.warn("Network error while fetching forecast for {}: {}", city, e.getMessage());
             } catch (IllegalStateException e) {
-                System.err.println(e.getMessage());
+                log.warn(e.getMessage());
             }
         }
 
