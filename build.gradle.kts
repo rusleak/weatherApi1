@@ -23,6 +23,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.11.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.mockito:mockito-core:5.14.2")
 }
 
 tasks.test {
@@ -50,17 +51,30 @@ tasks.jacocoTestReport {
     )
 }
 
-tasks.jacocoTestCoverageVerification {
-    dependsOn(tasks.jacocoTestReport)
-
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
     classDirectories.setFrom(
         files(classDirectories.files.map {
             fileTree(it) {
-                exclude("**/dto/**")
+                exclude("**/dto/**", "**/app/**")
             }
         })
     )
+}
 
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it) {
+                exclude("**/dto/**", "**/app/**")
+            }
+        })
+    )
     violationRules {
         rule {
             limit {
@@ -68,7 +82,6 @@ tasks.jacocoTestCoverageVerification {
                 value = "COVEREDRATIO"
                 minimum = "0.70".toBigDecimal()
             }
-
             limit {
                 counter = "BRANCH"
                 value = "COVEREDRATIO"

@@ -12,14 +12,16 @@ import java.util.Map;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         AppConfig config = AppConfig.fromLocalProperties();
 
         WeatherApiClient client = RetrofitClientFactory.create(config.getBaseUrl());
 
         ForecastService forecastService = new ForecastService(client, config);
 
-        Map<City, ForecastDay> forecast = forecastService.getTomorrowForecast();
+        City[] cities = City.values();
+
+        Map<City, ForecastDay> forecast = forecastService.getTomorrowForecast(cities);
 
         ForecastPrinter printer = new ForecastPrinter();
         printer.print(forecast);

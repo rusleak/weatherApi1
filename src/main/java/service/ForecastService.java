@@ -24,18 +24,19 @@ public class ForecastService {
         this.config = config;
     }
 
-    public Map<City, ForecastDay> getTomorrowForecast() throws IOException {
+    public Map<City, ForecastDay> getTomorrowForecast(City[] cities) {
         Map<City, ForecastDay> forecasts = new LinkedHashMap<>();
 
-        for (City city : City.values()) {
-            ForecastResponse response = getForecast(city);
-
-            ForecastDay tomorrow = response
-                    .getForecast()
-                    .getForecastDays()
-                    .get(TOMORROW_INDEX);
-
-            forecasts.put(city, tomorrow);
+        for (City city : cities) {
+            try {
+                ForecastResponse response = getForecast(city);
+                ForecastDay tomorrow = response.getForecast().getForecastDays().get(TOMORROW_INDEX);
+                forecasts.put(city, tomorrow);
+            } catch (IOException e) {
+                System.err.println("Network error while fetching forecast for " + city + ": " + e.getMessage());
+            } catch (IllegalStateException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         return forecasts;
@@ -50,8 +51,7 @@ public class ForecastService {
 
         if (!response.isSuccessful() || response.body() == null) {
             throw new IllegalStateException(
-                    "Failed to fetch forecast for " + city +
-                            ". HTTP status: " + response.code()
+                    "Failed to fetch forecast for " + city + ". HTTP status: " + response.code()
             );
         }
 

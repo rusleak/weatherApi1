@@ -1,1 +1,2 @@
 weather.api.key=YOUR_KEY
+weather.api.base-url=https://api.weatherapi.com/v1/
