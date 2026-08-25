@@ -1,30 +1,23 @@
 package app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import client.RetrofitClientFactory;
+import client.WeatherApiClient;
 import config.AppConfig;
 import config.City;
 import dto.ForecastDay;
 import dto.ForecastResponse;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import retrofit2.Response;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         AppConfig config = AppConfig.fromLocalProperties();
-        String url = config.getBaseUrl() + "forecast.json"
-                + "?key=" + config.getApiKey()
-                + "&q=" + City.CHISINAU.getApiQueryName()
-                + "&days=2";
+        WeatherApiClient client = RetrofitClientFactory.create(config.getBaseUrl());
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Response<ForecastResponse> response = client.getForecast(
+                config.getApiKey(), City.CHISINAU.getApiQueryName(), 2
+        ).execute();
 
-        ObjectMapper mapper = new ObjectMapper();
-        ForecastResponse parsed = mapper.readValue(response.body(), ForecastResponse.class);
+        ForecastResponse parsed = response.body();
 
         ForecastDay tomorrow = parsed.getForecast().getForecastDays().get(1);
         System.out.println("Date: " + tomorrow.getDate());

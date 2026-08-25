@@ -10,9 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AppConfigTest {
 
     @Test
-    void shouldCreateConfigWhenApiKeyIsPresent() {
+    void shouldCreateConfigWhenAllPropertiesArePresent() {
         Properties props = new Properties();
         props.setProperty("weather.api.key", "test-key-123");
+        props.setProperty("weather.api.base-url", "https://api.weatherapi.com/v1/");
 
         AppConfig config = AppConfig.fromProperties(props);
 
@@ -23,6 +24,7 @@ class AppConfigTest {
     @Test
     void shouldThrowWhenApiKeyIsMissing() {
         Properties props = new Properties();
+        props.setProperty("weather.api.base-url", "https://api.weatherapi.com/v1/");
 
         assertThrows(IllegalStateException.class, () -> AppConfig.fromProperties(props));
     }
@@ -31,6 +33,15 @@ class AppConfigTest {
     void shouldThrowWhenApiKeyIsBlank() {
         Properties props = new Properties();
         props.setProperty("weather.api.key", "   ");
+        props.setProperty("weather.api.base-url", "https://api.weatherapi.com/v1/");
+
+        assertThrows(IllegalStateException.class, () -> AppConfig.fromProperties(props));
+    }
+
+    @Test
+    void shouldThrowWhenBaseUrlIsMissing() {
+        Properties props = new Properties();
+        props.setProperty("weather.api.key", "test-key-123");
 
         assertThrows(IllegalStateException.class, () -> AppConfig.fromProperties(props));
     }

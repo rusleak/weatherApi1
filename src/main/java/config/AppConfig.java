@@ -7,12 +7,14 @@ import java.util.Properties;
 public final class AppConfig {
 
     private static final String API_KEY_PROPERTY = "weather.api.key";
-    private static final String BASE_URL = "https://api.weatherapi.com/v1/";
+    private static final String BASE_URL_PROPERTY = "weather.api.base-url";
 
     private final String apiKey;
+    private final String baseUrl;
 
-    private AppConfig(String apiKey) {
+    private AppConfig(String apiKey, String baseUrl) {
         this.apiKey = apiKey;
+        this.baseUrl = baseUrl;
     }
 
     public static AppConfig fromLocalProperties() {
@@ -22,7 +24,7 @@ public final class AppConfig {
             if (in == null) {
                 throw new IllegalStateException(
                         "local.properties not found. Copy local.properties.example to local.properties " +
-                                "and add your key");
+                                "and fill it in");
             }
             props.load(in);
         } catch (IOException e) {
@@ -37,7 +39,13 @@ public final class AppConfig {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(API_KEY_PROPERTY + " is missing in local.properties");
         }
-        return new AppConfig(apiKey);
+
+        String baseUrl = props.getProperty(BASE_URL_PROPERTY);
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalStateException(BASE_URL_PROPERTY + " is missing in local.properties");
+        }
+
+        return new AppConfig(apiKey, baseUrl);
     }
 
     public String getApiKey() {
@@ -45,6 +53,6 @@ public final class AppConfig {
     }
 
     public String getBaseUrl() {
-        return BASE_URL;
+        return baseUrl;
     }
 }
