@@ -124,4 +124,15 @@ class ForecastServiceTest {
         response.setForecast(forecast);
         return response;
     }
+
+    @Test
+    void shouldSkipCityWhenNetworkErrorOccurs() throws IOException {
+        Call<ForecastResponse> call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Connection timed out"));
+        when(client.getForecast(eq("test-key"), eq(City.CHISINAU.getApiQueryName()), anyInt())).thenReturn(call);
+
+        Map<City, ForecastDay> result = service.getTomorrowForecast(new City[]{City.CHISINAU});
+
+        assertEquals(0, result.size());
+    }
 }
