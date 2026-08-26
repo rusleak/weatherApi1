@@ -22,6 +22,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:$junitBomVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$mockWebServerVersion")
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
@@ -33,9 +35,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     testCompileOnly("org.projectlombok:lombok:$lombokVersion")
     testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
-
-    testImplementation("com.squareup.okhttp3:mockwebserver:$mockWebServerVersion")
-    testImplementation("org.mockito:mockito-core:$mockitoVersion")
 }
 
 tasks.test {
